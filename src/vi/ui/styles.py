@@ -78,7 +78,7 @@ class Styles:
 
 class TextInverter():
     def getTextColourFromBackground(self, colour):
-        if colour[0] is '#':
+        if colour[0] == '#':
             colour = colour[1:]
         red = int(colour[0:2], 16)
         green = int(colour[2:4], 16)

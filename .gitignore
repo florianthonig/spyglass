@@ -5,3 +5,5 @@
 src/build/*
 src/dist/*
 venv/
+
+Pipfile.lock

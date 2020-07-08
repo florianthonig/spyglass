@@ -61,36 +61,50 @@ To use this feature: click on a pilot in the local pilot list and then type the 
  - **? (Unknown)**: the pilot is not known by the KOS-checker system and there are no hostile corporations in their employment history.
 
 
-## Running Spyglass from Source
+# Installation
+## Linux
+### Step 1: Install distro packages
+For using this project on linux you first need to install distro packages.
+If you use another distro, search for the packages.
 
-To run or build from the source you need the following packages installed on your machine. Most, if not all, can be installed from the command line using package management software such as "pip". Mac and Linux both come with pip installed, Windows users may need to install [cygwin](https://www.cygwin.com) to get pip. Of course all the requirements also have download links.
+**Arch Linux and derivates:**
+```
+pacman -S pipenv espeak ffmpeg qt5-default qt5-svg qt5-webengine
+```
+**Debian and derivates (like Ubuntu):**
+```
+apt-get install pipenv espeak ffmpeg libespeak1 qtbase5-dev
+```
+### Step 2: Install python packages
+As this is a python project and it uses [pipenv](https://pipenv.pypa.io/en/latest/) the installation for the requirements is pretty easy.
+Navigate to the project directory and use the following command to install the packages.
+```
+pipenv install
+```
 
-The packages required are:
-- Python 2.7.x
-https://www.python.org/downloads/
-Spyglass is not compatible with Python 3! (yet)
-- PyQt4x
-http://www.riverbankcomputing.com/software/pyqt/download
-Please use the PyQt Binary Package for Py2.7
-Spyglass is not compatible with PyQt5! (yet)
-- BeautifulSoup 4
-https://pypi.python.org/pypi/beautifulsoup4
-- Pyglet 1.2.4 (for python 2.7)
-https://bitbucket.org/pyglet/pyglet/wiki/Download
-pyglet is used to play the sound – If it is not available the sound option will be disabled.
-- Requests 2
-https://pypi.python.org/pypi/requests
-- Six for python 3 compatibility https://pypi.python.org/pypi/six
-- Pyaml for parsing theme files
-- pyttsx for text to speech
+# Running Spyglass
+## Linux
+### Variant 1 (run directly)
+Navigate to the project directory and execute the following command:
+```
+pipenv run src/spyglass.py
+```
 
-For ubuntu based distributions there is a script that will install these dependencies included. However it's mileage may vary.
+### Variant 2 (run in venv shell)
+For activating a shell in a virtual environment navigate into the project directory  and execute:
+```
+pipenv shell
+```
+In the virtual environment, you can run **spyglass** directly with the following commands:
+```
+cd src
+python spyglass.py
+```
 
-## The background of Spyglass
-
+# The background of Spyglass
 Spyglass is a project aimed at the continuation to the work done on the Vintel tool by [Xanthos](https://github.com/Xanthos-Eve) which can be found [here](https://github.com/Xanthos-Eve/vintel).
 
-## FAQ
+# FAQ
 
 **License?**
 

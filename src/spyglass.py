@@ -95,7 +95,7 @@ class Application(QApplication):
                     chatLogDirectory = os.path.join(home, "My Documents", "EVE", "logs", "Chatlogs")
         if not os.path.exists(chatLogDirectory):
             # None of the paths for logs exist, bailing out
-            QMessageBox.critical(None, "No path to Logs", "No logs found at: " + chatLogDirectory, "Quit")
+            QMessageBox.critical(None, "No path to Logs", "No logs found at: " + chatLogDirectory, QMessageBox.Close)
             sys.exit(1)
 
         # Setting local directory for cache and logging
