@@ -51,13 +51,14 @@ from PyQt5.QtWidgets import  QMessageBox
 
 # Timer intervals
 MESSAGE_EXPIRY_SECS = 20 * 60
-MAP_UPDATE_INTERVAL_MSECS = 4 * 1000
+#MAP_UPDATE_INTERVAL_MSECS = 4 * 1000
 CLIPBOARD_CHECK_INTERVAL_MSECS = 4 * 1000
 
 
 class MainWindow(QtWidgets.QMainWindow):
 
     chat_message_added = pyqtSignal(object, object)
+    avatar_loaded = pyqtSignal(object, object)
 
     def __init__(self, pathToLogs, trayIcon, backGroundColor):
 
@@ -75,8 +76,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
 
         self.pathToLogs = pathToLogs
-        self.mapTimer = QtCore.QTimer(self)
-        self.mapTimer.timeout.connect(self.updateMapView)
+        #self.mapTimer = QtCore.QTimer(self)
+        #self.mapTimer.timeout.connect(self.updateMapView)
         self.clipboardTimer = QtCore.QTimer(self)
         self.oldClipboardContent = ""
         self.trayIcon = trayIcon
@@ -243,7 +244,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.voiceThread.start()
 
     def setupMap(self, initialize=False):
-        self.mapTimer.stop()
+        #self.mapTimer.stop()
         self.filewatcherThread.paused = True
 
         logging.info("Finding map file")
@@ -314,7 +315,7 @@ class MainWindow(QtWidgets.QMainWindow):
         logging.critical("Updating the map")
         self.updateMapView()
         self.setInitialMapPositionForRegion(regionName)
-        self.mapTimer.start(MAP_UPDATE_INTERVAL_MSECS)
+        #self.mapTimer.start(MAP_UPDATE_INTERVAL_MSECS)
         # Allow the file watcher to run now that all else is set up
         self.filewatcherThread.paused = False
         logging.critical("Map setup complete")
@@ -603,10 +604,11 @@ class MainWindow(QtWidgets.QMainWindow):
         #     scrollPosition = self.mapView.page().mainFrame().scrollPosition()
         # else:
         #     scrollPosition = self.initialMapPosition
-        self.mapView.setContent(QByteArray(content.encode('utf-16')), "text/html")
+        self.mapView.setContent(QByteArray(content.encode('utf-8')), "text/html")
+
         # self.mapView.page().mainFrame().setScrollPosition(scrollPosition)
         #TODO: Fix link delegation
-        # self.mapView.page().setLinkDelegationPolicy(QWebEnginePage.DelegateAllLinks)
+        #self.mapView.page().setLinkDelegationPolicy(QWebEnginePage.DelegateAllLinks)
 
         # Make sure we have positioned the window before we nil the initial position;
         # even though we set it, it may not take effect until the map is fully loaded
@@ -897,6 +899,8 @@ class ChatroomsChooser(QtWidgets.QDialog):
 
 
 class RegionChooser(QtWidgets.QDialog):
+    new_region_chosen = pyqtSignal()
+
     def __init__(self, parent):
         QtWidgets.QDialog.__init__(self, parent)
         uic.loadUi(resourcePath("vi/ui/RegionChooser.ui"), self)

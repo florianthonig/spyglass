@@ -384,11 +384,10 @@ class System(object):
 
     def removeLocatedCharacter(self, charname):
         idName = self.name + u"_loc"
-
         if charname in self.__locatedCharacters:
             self.__locatedCharacters.remove(charname)
             if not self.__locatedCharacters:
-                for element in self.mapSoup.select("#" + idName):
+                for element in self.mapSoup.find_all(id=idName):
                     element.decompose()
 
     def addNeighbour(self, neighbourSystem):

@@ -62,9 +62,6 @@ class Application(QApplication):
         splash = QtWidgets.QSplashScreen(QtGui.QPixmap(resourcePath("vi/ui/res/logo_splash.png")))
         splash.show()
 
-        if version.SNAPSHOT:
-            QMessageBox.critical(None, "Snapshot", "This is a snapshot release... Use as you will....")
-
         # Set up paths
         chatLogDirectory = ""
         if len(sys.argv) > 1:

@@ -17,13 +17,30 @@
 #  along with this program.	 If not, see <http://www.gnu.org/licenses/>.  #
 ###########################################################################
 
-from PyQt5.QtWebEngineWidgets  import QWebEngineView
+from PyQt5.QtWebEngineWidgets  import QWebEngineView, QWebEnginePage
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtGui import *
 from PyQt5 import QtCore
 
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QEvent
+
+import logging
+from spyglass import Cache
+
+class DebugWebPage(QWebEnginePage):
+    def __init__(self, parent=None):
+        super(QWebEnginePage, self).__init__(parent)
+        logging.warning("setting up debug page")
+
+        spyglassCache = Cache()
+        backGroundColor = spyglassCache.getFromCache("background_color")
+        logging.info("QWebEnginePage background color: {}".format(backGroundColor))
+        if backGroundColor:
+            self.setStyleSheet("QWebEnginePage { background-color: %s; }" % backGroundColor)
+
+    def javaScriptConsoleMessage(self, level, message, lineNumber, sourceID):
+        logging.info("{} {} in {} line {}".format(level, message, sourceID, lineNumber))
 
 
 class PanningWebView(QWebEngineView):
@@ -36,6 +53,13 @@ class PanningWebView(QWebEngineView):
         self.offset = 0
         self.handIsClosed = False
         self.clickedInScrollBar = False
+        self.setPage(DebugWebPage(self))
+
+        spyglassCache = Cache()
+        backGroundColor = spyglassCache.getFromCache("background_color")
+        logging.warning("QWebEngineView background color: {}".format(backGroundColor))
+        if backGroundColor:
+            self.setStyleSheet("QWebEngineView { background-color: %s; }" % backGroundColor)
 
     def mousePressEvent(self, mouseEvent):
         pos = mouseEvent.pos()
