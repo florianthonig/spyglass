@@ -481,9 +481,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.activateSoundAction.setEnabled(False)
             self.soundSetupAction.setEnabled(False)
             # self.soundButton.setEnabled(False)
-            QMessageBox.warning(None, "Sound disabled",
-                                "The lib 'pyglet' which is used to play sounds cannot be found, ""so the soundsystem is disabled.\nIf you want sound, please install the 'pyglet' library. This warning will not be shown again.",
-                                QMessageBox.Ok)
         else:
             if newValue is None:
                 newValue = self.activateSoundAction.isChecked()
@@ -862,8 +859,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     for system in message.systems:
                         systemname = system.name
                         systemList[systemname].setStatus(message.status)
-                        if message.status in (
-                        states.REQUEST, states.ALARM) and message.user not in self.knownPlayerNames:
+                        if message.status in (states.REQUEST, states.ALARM) and message.user not in self.knownPlayerNames:
                             alarmDistance = self.alarmDistance if message.status == states.ALARM else 0
                             for nSystem, data in system.getNeighbours(alarmDistance).items():
                                 distance = data["distance"]

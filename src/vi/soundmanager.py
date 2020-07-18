@@ -25,21 +25,12 @@ import requests
 import time
 
 from collections import namedtuple
-from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QThread, QUrl
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from .resources import resourcePath
 import queue
 import logging
 from vi.singleton import Singleton
-
-global gPygletAvailable
-
-try:
-    import pyglet
-    from pyglet import media
-
-    gPygletAvailable = True
-except ImportError:
-    gPygletAvailable = False
 
 
 class SoundManager(metaclass=Singleton):
@@ -51,7 +42,7 @@ class SoundManager(metaclass=Singleton):
     soundActive = False
     soundAvailable = False
     useDarwinSound = False
-    useSpokenNotifications = True
+    useSpokenNotifications = False
     _soundThread = None
 
     def __init__(self):
@@ -112,10 +103,7 @@ class SoundManager(metaclass=Singleton):
         def __init__(self):
             QThread.__init__(self)
             self.queue = queue.Queue()
-            if gPygletAvailable:
-                self.player = media.Player()
-            else:
-                self.player = None
+            self.player = QMediaPlayer()
             self.active = True
 
         def setVolume(self, volume):
@@ -126,21 +114,12 @@ class SoundManager(metaclass=Singleton):
                 audioFile, message, abbreviatedMessage = self.queue.get()
                 if not self.active:
                     return
-                if SoundManager().useSpokenNotifications and (message != "" or abbreviatedMessage != ""):
-                    if abbreviatedMessage != "":
-                        message = abbreviatedMessage
-                    if not self.speak(message):
-                        self.playAudioFile(audioFile, False)
-                        logging.error("SoundThread: sorry, speech not yet implemented on this platform")
-                elif audioFile is not None:
-                    self.playAudioFile(audioFile, False)
+                self.playAudioFile(audioFile, False)
 
         def quit(self):
+            logging.debug("Quitting sound thread")
             self.active = False
             self.queue.put((None, None, None))
-            if self.player:
-                self.player.pause()
-                self.player.delete()
             QThread.quit(self)
 
         def speak(self, message):
@@ -161,16 +140,12 @@ class SoundManager(metaclass=Singleton):
 
         def playAudioFile(self, filename, stream=False):
             try:
-                volume = float(self.volume) / 100.0
-                if self.player:
-                    src = media.load(filename, streaming=stream)
-                    self.player.queue(src)
-                    self.player.volume = volume
-                    self.player.play()
-                elif self.isDarwin:
-                    subprocess.call(["afplay -v {0} {1}".format(volume, filename)], shell=True)
+                self.player.setMedia(QMediaContent(QUrl.fromLocalFile(filename)))
+                self.player.setVolume(self.volume)
+                self.player.play()
             except Exception as e:
                 logging.error("SoundThread.playAudioFile exception: %s", e)
+            logging.debug("Play audio: %s with %i volume", filename, self.volume)
 
         def darwinSpeak(self, message):
             try:
