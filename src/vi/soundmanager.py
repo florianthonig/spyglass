@@ -54,7 +54,7 @@ class SoundManager(metaclass=Singleton):
             self._soundThread.start()
 
     def platformSupportsAudio(self):
-        return self.platformSupportsSpeech() or gPygletAvailable
+        return False
 
     def platformSupportsSpeech(self):
         if self._soundThread.isDarwin:
